@@ -42,7 +42,7 @@ PINECONE_INDEX_NAME=your_pinecone_index_name
 To start the Reminisc chat assistant, run the `chat.py` script:
 
 ```bash
-python reminisc/chat.py
+python chat.py
 ```
 
 You can now interact with the assistant by entering your messages. The assistant will generate responses based on the stored memories and the current conversation context.
@@ -59,7 +59,6 @@ You can modify the configuration settings in the `reminisc/config/config.py` fil
 ## Project Structure
 
 - `reminisc/`: The main package directory.
-  - `chat.py`: The entry point for running the Reminisc chat assistant.
   - `config/`: Contains configuration files.
     - `config.py`: Defines the configuration settings for the project.
   - `src/`: Contains the core components of the Reminisc assistant.
@@ -70,6 +69,7 @@ You can modify the configuration settings in the `reminisc/config/config.py` fil
     - `vectordb.py`: Interacts with the Pinecone vector database for memory storage and retrieval.
 - `requirements.txt`: Lists the required Python dependencies.
 - `.env.example`: An example environment file template.
+- `chat.py`: The entry point for running the Reminisc chat assistant.
 
 ## Contributing
 
