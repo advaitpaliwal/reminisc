@@ -20,14 +20,15 @@ class LangChainChat:
             return_messages=True
         )
         self.system_prompt = (
-                "You are a helpful AI assistant with access to memory:\n"
-                "Retrieved Memory: This is your own memory that you can use to provide information and context relevant to the conversation.\n"
-                "Use the retrieved memory and chat history to generate a relevant and contextual response to the user's input.\n\n"
-                "Retrieved Memory: {retrieved_memory}\n\n"
+            "You are a helpful AI assistant with access to memory:\n"
+            "Retrieved Memory: This is your own memory that you can use to provide information and context relevant to the conversation.\n"
+            "Use the retrieved memory and chat history to generate a relevant and contextual response to the user's input.\n\n"
+            "Retrieved Memory: {retrieved_memory}\n\n"
         )
         self.prompt = ChatPromptTemplate.from_messages([
             SystemMessagePromptTemplate.from_template(self.system_prompt),
-            MessagesPlaceholder(variable_name=self.conversation_memory.memory_key, optional=True),
+            MessagesPlaceholder(
+                variable_name=self.conversation_memory.memory_key, optional=True),
             HumanMessagePromptTemplate.from_template("{input}")
         ])
         self.chain = self.prompt | self.llm
@@ -51,14 +52,14 @@ class LangChainChat:
             'chat_history': self.conversation_memory.load_memory_variables({})[self.conversation_memory.memory_key]
         }
 
-        
         response = self.chain.stream(llm_input)
         output = ""
         for chunk in response:
             yield chunk.content
             output += chunk.content
 
-        self.conversation_memory.save_context({'input': user_input}, {'output': output})
+        self.conversation_memory.save_context(
+            {'input': user_input}, {'output': output})
 
         logger.info(f"User Input: {user_input}")
         logger.info(f"Generated Response: {response}")

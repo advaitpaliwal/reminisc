@@ -1,7 +1,7 @@
 from openai import OpenAI
 import os
 import logging
-from config.config import Config
+from reminisc.config.config import Config
 from dotenv import load_dotenv
 
 load_dotenv()
