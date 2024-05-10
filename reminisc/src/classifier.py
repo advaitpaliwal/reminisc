@@ -32,7 +32,6 @@ class Classifier:
                 max_tokens=1,
                 temperature=0,
             )
-            print(response.choices)
             decision = response.choices[0].message.content.lower() == 'true'
             logger.info(
                 f"Classification decision for query '{query}': {decision}")

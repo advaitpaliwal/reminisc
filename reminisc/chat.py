@@ -52,9 +52,6 @@ class LangChainChat:
             # Store user input as a memory
             self.memory_manager.store_memory(user_input)
 
-        # Add the retrieved memory to the conversation memory
-        self.memory.chat_memory.add_user_message(relevant_memory)
-
         # Generate response
         response = self.conversation.predict(
             human_input=user_input,
