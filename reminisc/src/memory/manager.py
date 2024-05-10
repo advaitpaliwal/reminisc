@@ -18,4 +18,7 @@ class MemoryManager:
 
     def retrieve_memory(self, query: str):
         results = self.vectordb.search(query)
-        return results
+        memory = ""
+        for doc in results:
+            memory += doc.page_content + "\n"
+        return memory
