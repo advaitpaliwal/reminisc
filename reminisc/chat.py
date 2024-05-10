@@ -37,9 +37,6 @@ class LangChainChat:
             memory=self.memory,
             prompt=self.prompt,
             verbose=True,
-            input_key="human_input",
-            memory_variables=["chat_history",
-                              "retrieved_memory"]
         )
 
     def process_message(self, user_input):
