@@ -22,7 +22,6 @@ class LangChainChat:
         self.system_prompt = (
                 "System: You are an AI assistant with access to two types of memory:\n"
                 "1. Retrieved Memory: This is your own memory that you can use to provide information and context relevant to the conversation.\n"
-                "2. Chat History: This is the history of the current conversation, limited to the last 7 messages.\n\n"
                 "Use the retrieved memory and chat history to generate a relevant and contextual response to the user's input.\n\n"
                 "Retrieved Memory: {retrieved_memory}\n\n"
         )
