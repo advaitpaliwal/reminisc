@@ -1,6 +1,6 @@
 # Reminisc
 
-Reminisc is an open-source AI-powered conversational assistant that utilizes memory to enhance user interactions. It leverages OpenAI's language models and Pinecone's vector database for memory storage and retrieval.
+Reminisc is an open-source memory for conversational LLMs.
 
 ## Features
 
