@@ -1,6 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate
+from reminisc.src.memory.creator import MemoryCreator
 from reminisc.src.memory.manager import MemoryManager
 from reminisc.src.classifier import Classifier
 import logging
@@ -9,8 +10,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class LangChainChat:
+class ReminiscChat:
     def __init__(self):
+        self.memory_creator = MemoryCreator()
         self.memory_manager = MemoryManager()
         self.classifier = Classifier()
         self.llm = ChatOpenAI(model_name="gpt-3.5-turbo")
@@ -43,7 +45,9 @@ class LangChainChat:
         logger.debug(f"{should_store_memory=}")
         if should_store_memory:
             # Store user input as a memory
-            self.memory_manager.store_memory(user_input)
+            memory = self.memory_creator.create_memory(user_input)
+            logger.debug(f"Memory created: {memory}")
+            self.memory_manager.store_memory(memory)
 
         # Generate response
         llm_input = {
@@ -67,7 +71,7 @@ class LangChainChat:
 
 # Example usage
 if __name__ == "__main__":
-    chat = LangChainChat()
+    chat = ReminiscChat()
     while True:
         user_input = input("User: ")
         if user_input.lower() == 'exit':
