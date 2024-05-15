@@ -27,14 +27,12 @@ pip install -r requirements.txt
 ```
 
 3. Set up environment variables:
-
-- Create a `.env` file in the project root directory.
-- Add the following variables to the `.env` file:
+   - Create a `.env` file in the project root directory.
+   - Add the following variables to the `.env` file:
 
 ```
 OPENAI_API_KEY=your_openai_api_key
-PINECONE_API_KEY=your_pinecone_api_key
-PINECONE_INDEX_NAME=your_pinecone_index_name
+CHROMA_INDEX_NAME=reminisc-memories
 ```
 
 ## Usage
@@ -66,7 +64,7 @@ You can modify the configuration settings in the `reminisc/config/config.py` fil
     - `memory/`: Contains memory-related modules.
       - `creator.py`: Creates memories from user input using OpenAI's language model.
       - `manager.py`: Manages the storage and retrieval of memories using the vector database.
-    - `vectordb.py`: Interacts with the Pinecone vector database for memory storage and retrieval.
+      - `vectordb.py`: Interacts with the Chroma vector database for memory storage and retrieval.
 - `requirements.txt`: Lists the required Python dependencies.
 - `.env.example`: An example environment file template.
 - `chat.py`: The entry point for running the Reminisc chat assistant.

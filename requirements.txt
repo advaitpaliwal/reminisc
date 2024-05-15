@@ -1,4 +1,4 @@
 python-dotenv
-langchain_openai
-langchain_pinecone
+langchain-openai
+langchain-chroma
 streamlit

@@ -1,10 +1,8 @@
 import os
 import logging
 from dotenv import load_dotenv
-from langchain_pinecone import PineconeVectorStore
+from langchain_community.vectorstores.chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
-from pinecone import Pinecone, ServerlessSpec
-
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -12,23 +10,16 @@ logger = logging.getLogger(__name__)
 
 class VectorDB:
     def __init__(self):
-        self.client = Pinecone()
-        self.index_name = os.getenv("PINECONE_INDEX_NAME")
+        self.index_name = os.getenv("CHROMA_INDEX_NAME")
         self.embedder = OpenAIEmbeddings()
         self.vectordb = self._init_vectordb()
         logger.info("VectorDB initialized")
 
     def _init_vectordb(self):
-        if self.index_name not in self.client.list_indexes().names():
-            self.client.create_index(
-                name=self.index_name,
-                metric="cosine",
-                dimension=1536,  # dimensionality of text-embedding-ada-002
-                spec=ServerlessSpec(cloud='aws', region='us-east-1')
-            )
-            logger.info(f"Created VectorDB index: {self.index_name}")
-        return PineconeVectorStore.from_existing_index(
-            index_name=self.index_name, embedding=self.embedder
+        return Chroma(
+            collection_name=self.index_name,
+            embedding_function=self.embedder,
+            persist_directory="./local/vectorstore",
         )
 
     def add(self, memory: str):
