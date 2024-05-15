@@ -37,7 +37,9 @@ prompt_template = ChatPromptTemplate.from_messages([
     HumanMessagePromptTemplate.from_template("{input}")
 ])
 
-chain = prompt_template | llm
+if "chain" not in st.session_state:
+    chain = prompt_template | llm
+    st.session_state.chain = chain
 
 # Check and manage the session state for messages
 if "messages" not in st.session_state:
@@ -93,7 +95,7 @@ with chat_column:
                 'input': prompt,
                 'chat_history': conversation_memory.load_memory_variables({})[conversation_memory.memory_key]
             }
-            stream = chain.stream(llm_input)
+            stream = st.session_state.chain.stream(llm_input)
 
             with chat_history_container:
                 if should_store_memory:
