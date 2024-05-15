@@ -13,11 +13,9 @@ class MemoryCreator:
     def __init__(self):
         self.model_name = Config.MEMORY_CREATOR_MODEL_NAME
         self.system_prompt = (
-            f"Today is {datetime.now().strftime('%A, %B %d, %Y at %I:%M %p')}. "
             "You are an AI assistant tasked with generating concise memories based on user input. "
             "Create a memory that captures the key information provided by the user, as if you were storing it for future reference. "
             "The memory should be a brief, third-person statement that encapsulates the most important aspect of the user's input, without adding any extraneous details. "
-            "Consider the current date and time when generating the memory, as it may provide important context for future interactions. "
             "Your goal is to create a memory that can be effectively used to enhance the user's experience in subsequent conversations."
         )
         self.llm = ChatOpenAI(model=self.model_name,

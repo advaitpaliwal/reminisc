@@ -37,15 +37,13 @@ CHROMA_INDEX_NAME=reminisc-memories
 
 ## Usage
 
-To start the Reminisc chat assistant, run the `chat.py` script:
+To start the Reminisc chat assistant, run:
 
 ```bash
-python chat.py
+streamlit run app.py
 ```
 
 You can now interact with the assistant by entering your messages. The assistant will generate responses based on the stored memories and the current conversation context.
-
-To exit the chat, simply type `exit`.
 
 ## Configuration
 
@@ -67,7 +65,7 @@ You can modify the configuration settings in the `reminisc/config/config.py` fil
       - `vectordb.py`: Interacts with the Chroma vector database for memory storage and retrieval.
 - `requirements.txt`: Lists the required Python dependencies.
 - `.env.example`: An example environment file template.
-- `chat.py`: The entry point for running the Reminisc chat assistant.
+- `app.py`: The Streamlit app for demo purposes.
 
 ## Contributing
 

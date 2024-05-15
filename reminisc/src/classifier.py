@@ -11,10 +11,17 @@ logger = logging.getLogger(__name__)
 class Classifier:
     def __init__(self):
         self.model_name = Config.CLASSIFIER_MODEL_NAME
-        self.system_prompt = ("Analyze the user's input to determine if it includes information relevant for enhancing future interactions. "
-                              "Consider whether the input provides insights into the user’s preferences, activities, personal details, or changes "
-                              "that might be significant for future conversations. Should this information be remembered to improve the quality of "
-                              "ongoing dialogue? Answer 'yes' to save or 'no' to disregard.")
+
+        self.system_prompt = (
+            "Analyze the user's input to determine if it contains any information worth remembering for future conversations.\n"
+            "Consider a broad range of details that could enhance the quality and personalization of ongoing interactions, such as:\n"
+            "- Personal facts: name, age, occupation, location, interests, preferences, etc.\n"
+            "- Significant life events or experiences shared by the user\n"
+            "- Important context about the user's current situation, challenges or goals\n"
+            "- Any other details that provide valuable insights into the user's personality, perspective or needs\n"
+            "If the input contains any such noteworthy information, respond with 'yes' to save it as a memory.\n"
+            "If the input does not contain any important details worth saving, respond with 'no' to disregard it.\n"
+        )
         self.openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def classify(self, query) -> bool:
@@ -26,13 +33,13 @@ class Classifier:
                     {'role': 'user', 'content': query}
                 ],
                 logit_bias={
-                    '1904': 100,  # Token ID for 'true'
-                    '3934': 100   # Token ID for 'false'
+                    '9891': 100,  # Token ID for 'yes'
+                    '2201': 100   # Token ID for 'no'
                 },
                 max_tokens=1,
                 temperature=0,
             )
-            decision = response.choices[0].message.content.lower() == 'true'
+            decision = response.choices[0].message.content.lower() == 'yes'
             logger.info(
                 f"Classification decision for query '{query}': {decision}")
             return decision

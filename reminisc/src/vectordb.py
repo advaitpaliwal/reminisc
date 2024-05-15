@@ -22,9 +22,10 @@ class VectorDB:
             persist_directory="./local/vectorstore",
         )
 
-    def add(self, memory: str):
-        self.vectordb.add_texts([memory])
+    def add(self, memory: str) -> str:
+        ids = self.vectordb.add_texts([memory])
         logger.info(f"Added memory to VectorDB: {memory}")
+        return ids[0]
 
     def search(self, query: str):
         results = self.vectordb.similarity_search(query)
