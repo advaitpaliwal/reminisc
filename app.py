@@ -112,7 +112,7 @@ with chat_column:
                 {"role": "assistant", "content": response})
 
 with memory_column:
-    st.header("Memory Management")
+    st.header("Manage Memory")
 
     # Display all memories
     memories = memory_manager.memories
