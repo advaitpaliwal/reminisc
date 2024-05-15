@@ -54,13 +54,13 @@ with chat_column:
 
     # Display the past conversation
     chat_history_container = st.container()
-    with chat_history_container:
-        for message in st.session_state.messages:
-            avatar = None
-            if message["role"] == "assistant":
-                avatar = "🧠"
-            with st.chat_message(message["role"], avatar=avatar):
-                st.markdown(message["content"])
+    # with chat_history_container:
+    #     for message in st.session_state.messages:
+    #         avatar = None
+    #         if message["role"] == "assistant":
+    #             avatar = "🧠"
+    #         with st.chat_message(message["role"], avatar=avatar):
+    #             st.markdown(message["content"])
 
     # User input handling
     with input_container.container():
