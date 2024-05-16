@@ -2,7 +2,7 @@
 
 Reminisc is an OpenAI inspired open-source memory framework for LLMs.
 
-![demo](demo.gif)
+![demo](assets/demo.gif)
 
 ## Features
 
