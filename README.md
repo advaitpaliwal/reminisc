@@ -1,6 +1,6 @@
 # Reminisc
 
-Reminisc is an open-source memory for conversational LLMs.
+Reminisc is an OpenAI inspired open-source memory framework for LLMs.
 
 ![demo](demo.gif)
 
@@ -61,10 +61,10 @@ You can modify the configuration settings in the `reminisc/config/config.py` fil
     - `config.py`: Defines the configuration settings for the project.
   - `src/`: Contains the core components of the Reminisc assistant.
     - `classifier.py`: Classifies user input to determine if it should be stored as a memory.
+    - `vectordb.py`: Interacts with the Chroma vector database for memory storage and retrieval.
     - `memory/`: Contains memory-related modules.
       - `creator.py`: Creates memories from user input using OpenAI's language model.
       - `manager.py`: Manages the storage and retrieval of memories using the vector database.
-      - `vectordb.py`: Interacts with the Chroma vector database for memory storage and retrieval.
 - `requirements.txt`: Lists the required Python dependencies.
 - `.env.example`: An example environment file template.
 - `app.py`: The Streamlit app for demo purposes.
