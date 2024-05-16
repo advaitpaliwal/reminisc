@@ -2,6 +2,8 @@
 
 Reminisc is an open-source memory for conversational LLMs.
 
+![demo](demo.gif)
+
 ## Features
 
 - Stores user input as memories for future reference
