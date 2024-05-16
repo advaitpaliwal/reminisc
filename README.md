@@ -75,6 +75,7 @@ We welcome contributions to improve Reminisc and expand its capabilities. Please
 
 Priority areas for contributions:
 
+- Packaging: Convert this framework into a distributable Python package.
 - LLM Integrations: Integrate additional language models for generating responses.
 - Vector Database Support: Expand support for various vector databases for memory storage and retrieval.
 - User-Controlled Memory: Allow users to instruct the assistant to remember or forget information and manage memories.
