@@ -73,18 +73,6 @@ You can modify the configuration settings in the `reminisc/config/config.py` fil
 - `CLASSIFIER_MODEL_NAME`: The OpenAI model used for classifying user input (default: "gpt-3.5-turbo").
 - `MEMORY_CREATOR_MODEL_NAME`: The OpenAI model used for creating memories from user input (default: "gpt-3.5-turbo").
 
-## Project Structure
-
-- `reminisc/config/`: Contains configuration files.
-- `reminisc/src/`: Contains the core components of the Reminisc assistant.
-  - `classifier.py`: Classifies user input to determine if it should be stored as a memory.
-  - `supabase_client.py`: Initializes the Supabase client for interacting with the Supabase database.
-  - `vectordb.py`: Interacts with the Supabase vector database for memory storage and retrieval.
-  - `memory/`: Contains memory-related modules.
-    - `creator.py`: Creates memories from user input using OpenAI's language model.
-    - `manager.py`: Manages the storage and retrieval of memories using the vector database.
-- `supabase/`: Contains Supabase configuration and SQL files.
-
 ## Contributing
 
 We welcome contributions to improve Reminisc and expand its capabilities. Please open an issue for suggestions or bug reports, or submit a pull request for code contributions.
