@@ -1,4 +1,4 @@
 python-dotenv
 langchain-openai
-langchain-chroma
-streamlit
+langchain-community
+supabase

@@ -119,7 +119,7 @@ with memory_column:
     for memory in memories:
         memory_id = memory["id"]
         timestamp = memory["timestamp"]
-        memory_content = memory["memory"]
+        memory_content = memory["content"]
 
         with st.expander(f"{timestamp}"):
             st.write(f"**Memory ID:** {memory_id}")

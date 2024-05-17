@@ -1,3 +1,5 @@
+Sure, here's the updated `README.md` with details on initializing Supabase and resetting the Supabase database:
+
 # Reminisc
 
 Reminisc is an OpenAI inspired open-source memory framework for LLMs.
@@ -11,7 +13,7 @@ Reminisc is an OpenAI inspired open-source memory framework for LLMs.
 - Classifies user input to determine if it should be stored as a memory
 - Generates contextual responses using retrieved memories and chat history
 - Utilizes an LLM for memory creation and response generation
-- Integrates with a vector database for efficient memory storage and retrieval
+- Integrates with Supabase and pgvector for efficient memory storage and retrieval
 
 ## Installation
 
@@ -34,8 +36,25 @@ pip install -r requirements.txt
 
 ```
 OPENAI_API_KEY=your_openai_api_key
-CHROMA_INDEX_NAME=reminisc-memories
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_key
 ```
+
+## Supabase Setup
+
+1. Initialize Supabase:
+
+   Ensure you have the Supabase CLI installed. If not, install it by following the instructions [here](https://supabase.io/docs/guides/cli).
+
+2. Apply database migrations:
+
+   Reset the Supabase database and apply the migrations to set up the required tables and functions:
+
+   ```bash
+   supabase db reset
+   ```
+
+   This will execute the SQL files in the `supabase/migrations` directory, setting up the necessary database schema.
 
 ## Usage
 
@@ -56,18 +75,15 @@ You can modify the configuration settings in the `reminisc/config/config.py` fil
 
 ## Project Structure
 
-- `reminisc/`: The main package directory.
-  - `config/`: Contains configuration files.
-    - `config.py`: Defines the configuration settings for the project.
-  - `src/`: Contains the core components of the Reminisc assistant.
-    - `classifier.py`: Classifies user input to determine if it should be stored as a memory.
-    - `vectordb.py`: Interacts with the Chroma vector database for memory storage and retrieval.
-    - `memory/`: Contains memory-related modules.
-      - `creator.py`: Creates memories from user input using OpenAI's language model.
-      - `manager.py`: Manages the storage and retrieval of memories using the vector database.
-- `requirements.txt`: Lists the required Python dependencies.
-- `.env.example`: An example environment file template.
-- `app.py`: The Streamlit app for demo purposes.
+- `reminisc/config/`: Contains configuration files.
+- `reminisc/src/`: Contains the core components of the Reminisc assistant.
+  - `classifier.py`: Classifies user input to determine if it should be stored as a memory.
+  - `supabase_client.py`: Initializes the Supabase client for interacting with the Supabase database.
+  - `vectordb.py`: Interacts with the Supabase vector database for memory storage and retrieval.
+  - `memory/`: Contains memory-related modules.
+    - `creator.py`: Creates memories from user input using OpenAI's language model.
+    - `manager.py`: Manages the storage and retrieval of memories using the vector database.
+- `supabase/`: Contains Supabase configuration and SQL files.
 
 ## Contributing
 

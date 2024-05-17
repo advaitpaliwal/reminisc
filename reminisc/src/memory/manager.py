@@ -1,50 +1,62 @@
-import json
-from reminisc.src.vectordb import VectorDB
+import os
 import logging
 from datetime import datetime
-import os
+from supabase import create_client
+from dotenv import load_dotenv
+from langchain_community.vectorstores import SupabaseVectorStore
+from langchain_openai import OpenAIEmbeddings
 
+load_dotenv()
 logger = logging.getLogger(__name__)
 
 
 class MemoryManager:
-    def __init__(self, memory_file="memories.json"):
-        self.vectordb = VectorDB()
-        self.memory_file = memory_file
-        self.load_memories()
+    def __init__(self):
+        self.table_name = "documents"
+        self.embedder = OpenAIEmbeddings()
+        self.client = self._init_supabase_client()
+        self.vectordb = self._init_vectordb()
+        self.memories = self.load_memories()
         logger.info("MemoryManager initialized")
 
+    def _init_supabase_client(self):
+        url = os.getenv("SUPABASE_URL")
+        key = os.getenv("SUPABASE_KEY")
+        return create_client(url, key)
+
+    def _init_vectordb(self):
+        return SupabaseVectorStore(
+            embedding=self.embedder,
+            client=self.client,
+            table_name=self.table_name,
+            query_name="match_documents",
+        )
+
     def store_memory(self, memory: str):
-        memory_id = self.vectordb.add(memory)
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        memory_entry = {
-            "id": memory_id,
-            "timestamp": timestamp,
-            "memory": memory
+        metadata = {
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         }
-        self.memories.append(memory_entry)
-        self.save_memories()
+        self.vectordb.add_texts(texts=[memory], metadatas=[metadata])
+        logger.info(f"Stored memory: {memory}")
 
     def retrieve_memory(self, query: str):
-        results = self.vectordb.search(query)
+        results = self.vectordb.similarity_search(query)
         memory = ""
         for doc in results:
             memory += doc.page_content + "\n"
         return memory
 
     def load_memories(self):
-        if os.path.exists(f"local/{self.memory_file}"):
-            with open(f"local/{self.memory_file}", "r") as file:
-                self.memories = json.load(file)
-        else:
-            self.memories = []
-
-    def save_memories(self):
-        with open(f"local/{self.memory_file}", "w") as file:
-            json.dump(self.memories, file, indent=4)
+        result = self.client.table(self.table_name).select(
+            "id, content, metadata->timestamp").execute()
+        logger.info(f"Loaded memories: {result}")
+        return result.data
 
     def delete_memory(self, memory_id: str):
-        self.memories = [
-            memory for memory in self.memories if memory["id"] != memory_id]
-        self.save_memories()
-        self.vectordb.delete(memory_id)
+        self.vectordb.delete(ids=[memory_id])
+        logger.info(f"Deleted memory: {memory_id}")
+
+
+if __name__ == "__main__":
+    manager = MemoryManager()
+    print(manager.load_memories())
