@@ -8,7 +8,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-class Classifier:
+class MemoryClassifier:
     def __init__(self):
         self.model_name = Config.CLASSIFIER_MODEL_NAME
 

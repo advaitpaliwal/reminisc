@@ -1,9 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate
-from reminisc.src.memory.creator import MemoryCreator
 from reminisc.src.memory.manager import MemoryManager
-from reminisc.src.classifier import Classifier
 import logging
 import streamlit as st
 
@@ -14,9 +12,8 @@ logger = logging.getLogger(__name__)
 st.set_page_config(page_title="Reminisc", layout="wide")
 st.title("🧠 Reminisc")
 st.info('Memory for conversational LLMs. https://github.com/advaitpaliwal/reminisc')
-memory_creator = MemoryCreator()
+
 memory_manager = MemoryManager()
-classifier = Classifier()
 llm = ChatOpenAI(model_name="gpt-4o")
 conversation_memory = ConversationBufferWindowMemory(
     memory_key="chat_history", k=7, return_messages=True
@@ -56,13 +53,6 @@ with chat_column:
 
     # Display the past conversation
     chat_history_container = st.container()
-    # with chat_history_container:
-    #     for message in st.session_state.messages:
-    #         avatar = None
-    #         if message["role"] == "assistant":
-    #             avatar = "🧠"
-    #         with st.chat_message(message["role"], avatar=avatar):
-    #             st.markdown(message["content"])
 
     # User input handling
     with input_container.container():
@@ -75,19 +65,9 @@ with chat_column:
                 with st.chat_message("user"):
                     st.markdown(prompt)
 
-            # Retrieve relevant memory based on user input
-            relevant_memory = memory_manager.retrieve_memory(prompt)
-            logger.debug(f"{relevant_memory=}")
-
-            # Classify user input to determine if it should be stored as a memory
-            should_store_memory = classifier.classify(prompt)
-            logger.debug(f"{should_store_memory=}")
-
-            if should_store_memory:
-                # Store user input as a memory
-                memory = memory_creator.create_memory(prompt)
-                logger.debug(f"Memory created: {memory}")
-                memory_manager.store_memory(memory)
+            # Process the input and manage memory using MemoryManager
+            memory = memory_manager.handle_user_input(prompt)
+            relevant_memory = memory_manager.search_memory(prompt)
 
             # Generate response using the LLM and conversation memory
             llm_input = {
@@ -98,7 +78,7 @@ with chat_column:
             stream = st.session_state.chain.stream(llm_input)
 
             with chat_history_container:
-                if should_store_memory:
+                if memory:
                     with st.expander("📝 Memory updated"):
                         st.write(memory)
                 with st.chat_message("assistant", avatar="🧠"):
@@ -115,7 +95,7 @@ with memory_column:
     st.header("Manage Memory")
 
     # Display all memories
-    memories = memory_manager.memories
+    memories = memory_manager.load_all_memories()
     for memory in memories:
         memory_id = memory["id"]
         timestamp = memory["timestamp"]
@@ -126,11 +106,11 @@ with memory_column:
             st.write(f"**Timestamp:** {timestamp}")
             st.write(f"**Memory:** {memory_content}")
             if st.button("Delete", key=memory_id):
-                memory_manager.delete_memory(memory_id)
+                memory_manager.remove_memory(memory_id)
                 st.experimental_rerun()
 
     with st.expander("✍️ Create New Memory"):
         new_memory = st.text_area("Enter a new memory")
         if st.button("Store Memory"):
-            memory_manager.store_memory(new_memory)
+            memory_manager.add_memory(new_memory)
             st.experimental_rerun()
