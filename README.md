@@ -58,7 +58,7 @@ SUPABASE_KEY=your_supabase_key
 
 ## Usage
 
-To start the Reminisc chat assistant, run:
+To start the Reminisc, run:
 
 ```bash
 streamlit run app.py
