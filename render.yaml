@@ -1,0 +1,9 @@
+services:
+  # A Docker web service
+  - type: web
+    name: reminisc-api
+    runtime: python
+    plan: free
+    autoDeploy: false
+    buildCommand: pip install -r requirements.txt
+    startCommand: fastapi run
