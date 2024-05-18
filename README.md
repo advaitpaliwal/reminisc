@@ -68,6 +68,10 @@ streamlit run app.py
 
 You can now interact with the assistant by entering your messages in the Streamlit app. The assistant will generate responses based on the stored memories and the current conversation context.
 
+## API Documentation
+
+For detailed information about the available API routes and their usage, please refer to the [documentation](reminisc/api/README.md).
+
 ## Configuration
 
 You can modify the configuration settings in the `reminisc/config/config.py` file. The available settings include:
