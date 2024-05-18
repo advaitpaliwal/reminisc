@@ -1,5 +1,3 @@
-Sure, here's the updated `README.md` with details on initializing Supabase and resetting the Supabase database:
-
 # Reminisc
 
 Reminisc is an OpenAI inspired open-source memory framework for LLMs.
@@ -42,29 +40,33 @@ SUPABASE_KEY=your_supabase_key
 
 ## Supabase Setup
 
-1. Initialize Supabase:
+1. Initialize Supabase: Ensure you have the Supabase CLI installed. If not, install it by following the instructions [here](https://supabase.io/docs/guides/cli).
 
-   Ensure you have the Supabase CLI installed. If not, install it by following the instructions [here](https://supabase.io/docs/guides/cli).
+2. Apply database migrations: Reset the Supabase database and apply the migrations to set up the required tables and functions:
 
-2. Apply database migrations:
+```bash
+supabase db reset
+```
 
-   Reset the Supabase database and apply the migrations to set up the required tables and functions:
-
-   ```bash
-   supabase db reset
-   ```
-
-   This will execute the SQL files in the `supabase/migrations` directory, setting up the necessary database schema.
+This will execute the SQL files in the `supabase/migrations` directory, setting up the necessary database schema.
 
 ## Usage
 
-To start the Reminisc, run:
+To start Reminisc:
+
+1. Run the FastAPI server:
+
+```bash
+fastapi dev main.py
+```
+
+2. In a separate terminal, run the Streamlit app:
 
 ```bash
 streamlit run app.py
 ```
 
-You can now interact with the assistant by entering your messages. The assistant will generate responses based on the stored memories and the current conversation context.
+You can now interact with the assistant by entering your messages in the Streamlit app. The assistant will generate responses based on the stored memories and the current conversation context.
 
 ## Configuration
 

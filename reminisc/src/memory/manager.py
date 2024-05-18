@@ -7,6 +7,7 @@ from langchain_community.vectorstores import SupabaseVectorStore
 from langchain_openai import OpenAIEmbeddings
 from reminisc.src.memory.classifier import MemoryClassifier
 from reminisc.src.memory.creator import MemoryCreator
+from uuid import uuid4
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -37,22 +38,24 @@ class MemoryManager:
         )
 
     def add_memory(self, memory: str):
+        memory_id = str(uuid4())
         metadata = {
+            "id": memory_id,
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         }
-        self.vectordb.add_texts(texts=[memory], metadatas=[metadata])
+        self.vectordb.add_texts(texts=[memory], metadatas=[
+                                metadata], ids=[memory_id])
         logger.info(f"Memory added: {memory}")
+        return metadata | {"content": memory}
 
     def search_memory(self, query: str):
         results = self.vectordb.similarity_search(query)
-        memory_content = ""
-        for doc in results:
-            memory_content += doc.page_content + "\n"
-        return memory_content
+        logger.info(f"Search results: {results}")
+        return results
 
     def load_all_memories(self):
         result = self.client.table(self.table_name).select(
-            "id, content, metadata->timestamp"
+            "id, content, metadata"
         ).execute()
         logger.info(f"Loaded memories: {result}")
         return result.data
@@ -61,12 +64,16 @@ class MemoryManager:
         self.vectordb.delete(ids=[memory_id])
         logger.info(f"Memory removed: {memory_id}")
 
-    def handle_user_input(self, user_input: str):
+    def handle_user_input(self, user_input: str) -> dict | None:
+        logger.info(f"User Input: {user_input}")
         should_store_memory = self.classifier.classify(user_input)
-
+        logger.info(f"Should store memory: {should_store_memory}")
         if should_store_memory:
-            memory = self.creator.create_memory(user_input)
-            self.add_memory(memory)
+            logger.info("Storing memory")
+            memory_content = self.creator.create_memory(user_input)
+            logger.info(f"Memory created: {memory_content}")
+            memory = self.add_memory(memory_content)
+            logger.info(f"Memory added: {memory}")
             return memory
         else:
             return None

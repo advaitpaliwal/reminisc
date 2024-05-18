@@ -1,19 +1,26 @@
+import logging
+import streamlit as st
+import requests
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate
-from reminisc.src.memory.manager import MemoryManager
-import logging
-import streamlit as st
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Set up the title and create instances of the required classes
+# Set up the title
 st.set_page_config(page_title="Reminisc", layout="wide")
 st.title("🧠 Reminisc")
 st.info('Memory for conversational LLMs. https://github.com/advaitpaliwal/reminisc')
 
-memory_manager = MemoryManager()
+# API endpoint URLs
+BASE_URL = "http://localhost:8000/api/v0/memory"
+CREATE_MEMORY_URL = f"{BASE_URL}/"
+GET_MEMORIES_URL = f"{BASE_URL}/"
+DELETE_MEMORY_URL = f"{BASE_URL}/"
+SEARCH_MEMORIES_URL = f"{BASE_URL}/search"
+PROCESS_INPUT_URL = f"{BASE_URL}/process"
+
 llm = ChatOpenAI(model_name="gpt-4o")
 conversation_memory = ConversationBufferWindowMemory(
     memory_key="chat_history", k=7, return_messages=True
@@ -37,6 +44,7 @@ prompt_template = ChatPromptTemplate.from_messages([
 if "chain" not in st.session_state:
     chain = prompt_template | llm
     st.session_state.chain = chain
+
 
 # Check and manage the session state for messages
 if "messages" not in st.session_state:
@@ -65,9 +73,18 @@ with chat_column:
                 with st.chat_message("user"):
                     st.markdown(prompt)
 
-            # Process the input and manage memory using MemoryManager
-            memory = memory_manager.handle_user_input(prompt)
-            relevant_memory = memory_manager.search_memory(prompt)
+            # Process the input and manage memory using API requests
+            response = requests.post(PROCESS_INPUT_URL, json={
+                                     "query": prompt})
+            process_response = response.json()
+            memory = process_response["content"]
+
+            # Search for relevant memories using API request
+            response = requests.post(
+                SEARCH_MEMORIES_URL, json={"query": prompt})
+            search_results = response.json()
+            relevant_memory = " ".join(
+                [memory["content"] for memory in search_results])
 
             # Generate response using the LLM and conversation memory
             llm_input = {
@@ -82,23 +99,24 @@ with chat_column:
                     with st.expander("📝 Memory updated"):
                         st.write(memory)
                 with st.chat_message("assistant", avatar="🧠"):
-                    response = st.write_stream(stream)
+                    response_text = st.write_stream(stream)
 
             logger.info(f"User Input: {prompt}")
-            logger.info(f"Generated Response: {response}")
+            logger.info(f"Generated Response: {response_text}")
 
             # Save the assistant's response in the session
             st.session_state.messages.append(
-                {"role": "assistant", "content": response})
+                {"role": "assistant", "content": response_text})
 
 with memory_column:
     st.header("Manage Memory")
 
-    # Display all memories
-    memories = memory_manager.load_all_memories()
+    # Display all memories using API request
+    response = requests.get(GET_MEMORIES_URL)
+    memories = response.json()
     for memory in memories:
-        memory_id = memory["id"]
-        timestamp = memory["timestamp"]
+        memory_id = memory["metadata"]["id"]
+        timestamp = memory["metadata"]["timestamp"]
         memory_content = memory["content"]
 
         with st.expander(f"{timestamp}"):
@@ -106,11 +124,11 @@ with memory_column:
             st.write(f"**Timestamp:** {timestamp}")
             st.write(f"**Memory:** {memory_content}")
             if st.button("Delete", key=memory_id):
-                memory_manager.remove_memory(memory_id)
+                requests.delete(f"{DELETE_MEMORY_URL}{memory_id}")
                 st.experimental_rerun()
 
     with st.expander("✍️ Create New Memory"):
         new_memory = st.text_area("Enter a new memory")
         if st.button("Store Memory"):
-            memory_manager.add_memory(new_memory)
+            requests.post(CREATE_MEMORY_URL, json={"content": new_memory})
             st.experimental_rerun()
