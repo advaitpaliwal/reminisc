@@ -91,6 +91,21 @@ Priority areas for contributions:
 - User-Controlled Memory: Allow users to instruct the assistant to remember or forget information and manage memories.
 - Memory Consolidation and Updating: Implement mechanisms for consolidating and updating memories to improve response relevance and coherence.
 
+## Citation
+
+If you utilize this repository, please consider citing it with:
+
+```
+@misc{reminisc,
+   author = {Advait Paliwal},
+   title = {Reminisc: Memory for LLMs},
+   year = {2024},
+   publisher = {GitHub},
+   journal = {GitHub repository},
+   howpublished = {\url{https://github.com/advaitpaliwal/reminisc}},
+}
+```
+
 ## License
 
 This project is licensed under the [Apache License](LICENSE).
