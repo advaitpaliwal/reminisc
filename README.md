@@ -33,9 +33,9 @@ pip install -r requirements.txt
    - Add the following variables to the `.env` file:
 
 ```
-OPENAI_API_KEY=your_openai_api_key
-SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_key
+OPENAI_API_KEY=
+SUPABASE_URL=
+SUPABASE_KEY=
 ```
 
 ## Supabase Setup
