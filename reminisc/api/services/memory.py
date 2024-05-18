@@ -23,7 +23,7 @@ class MemoryService:
         return [MemoryResponse(content=memory.page_content, metadata=memory.metadata) for memory in memories]
 
     def classify_input(self, user_input: str) -> bool:
-        return self.manager.classifier.classify(user_input)
+        return self.manager.classify(user_input)
 
     def process_user_input(self, user_input: str) -> MemoryResponse | None:
         memory = self.manager.handle_user_input(user_input)

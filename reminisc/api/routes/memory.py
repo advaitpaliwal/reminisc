@@ -25,6 +25,7 @@ async def get_memories(service: MemoryService = Depends()):
         memories = service.get_all_memories()
         return memories
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -34,6 +35,7 @@ async def delete_memory(memory_id: str, service: MemoryService = Depends()):
         service.delete_memory(memory_id)
         return {"message": "Memory deleted successfully"}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -43,6 +45,7 @@ async def search_memories(data: MemoryQuery, service: MemoryService = Depends())
         relevant_memories = service.search_memories(data.query)
         return relevant_memories
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -52,6 +55,7 @@ async def classify_input(data: MemoryQuery, service: MemoryService = Depends()):
         should_store_memory = service.classify_input(data.query)
         return {"should_store_memory": should_store_memory}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -61,4 +65,5 @@ async def process_user_input(data: MemoryQuery, service: MemoryService = Depends
         memory = service.process_user_input(data.query)
         return memory
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
