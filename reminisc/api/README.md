@@ -7,7 +7,7 @@ This document provides an overview of the API routes available in the Reminisc m
 The base URL for all API routes is:
 
 ```
-http://localhost:8000/api/v0/memory
+http://localhost:8000/v0/memory
 ```
 
 ## Authentication
