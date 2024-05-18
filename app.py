@@ -14,7 +14,7 @@ st.title("🧠 Reminisc")
 st.info('Memory for conversational LLMs. https://github.com/advaitpaliwal/reminisc')
 
 # API endpoint URLs
-BASE_URL = "http://localhost:8000/api/v0/memory"
+BASE_URL = "http://localhost:8000/v0/memory"
 CREATE_MEMORY_URL = f"{BASE_URL}/"
 GET_MEMORIES_URL = f"{BASE_URL}/"
 DELETE_MEMORY_URL = f"{BASE_URL}/"
