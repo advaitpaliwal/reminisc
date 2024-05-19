@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 # Set up the title
 st.set_page_config(page_title="Reminisc", layout="wide")
 st.title("🧠 Reminisc")
-st.info('Memory for conversational LLMs. https://github.com/advaitpaliwal/reminisc')
+st.info('Personal memory for AI. https://github.com/advaitpaliwal/reminisc')
 
 # API endpoint URLs
 BASE_URL = "http://localhost:8000/v0/memory"
