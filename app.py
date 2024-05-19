@@ -14,7 +14,7 @@ st.set_page_config(
 st.title("🧠 Reminisc")
 st.info('Personal memory for AI. https://github.com/advaitpaliwal/reminisc')
 
-user_id = st.text_input("Enter your user ID",
+user_id = st.text_input("Enter a User ID",
                         value=st.session_state.get("user_id", "default"))
 st.session_state["user_id"] = user_id
 
@@ -58,7 +58,7 @@ if "messages" not in st.session_state:
 chat_column, memory_column = st.columns(2)
 
 with chat_column:
-    st.header("Chat with Rem")
+    st.header("Talk to Rem")
 
     # Create an empty container for the input bar
     input_container = st.empty()
