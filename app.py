@@ -14,8 +14,9 @@ st.set_page_config(
 st.title("🧠 Reminisc")
 st.info('Personal memory for AI. https://github.com/advaitpaliwal/reminisc')
 
-# Hardcode user ID as "default"
-user_id = "default"
+user_id = st.text_input("Enter your user ID",
+                        value=st.session_state.get("user_id", "default"))
+st.session_state["user_id"] = user_id
 
 # API endpoint URLs
 BASE_URL = "http://localhost:8000/v0/memory"
@@ -123,7 +124,7 @@ with memory_column:
         timestamp = memory["metadata"]["timestamp"]
         memory_content = memory["content"]
 
-        with st.expander(f"{timestamp}"):
+        with st.expander(memory_content):
             st.write(f"**Memory ID:** {memory_id}")
             st.write(f"**Timestamp:** {timestamp}")
             st.write(f"**Memory:** {memory_content}")
