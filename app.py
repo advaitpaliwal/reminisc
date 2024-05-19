@@ -13,6 +13,9 @@ st.set_page_config(page_title="Reminisc", layout="wide")
 st.title("🧠 Reminisc")
 st.info('Personal memory for AI. https://github.com/advaitpaliwal/reminisc')
 
+# Hardcode user ID as "default"
+user_id = "default"
+
 # API endpoint URLs
 BASE_URL = "http://localhost:8000/v0/memory"
 CREATE_MEMORY_URL = f"{BASE_URL}/"
@@ -45,7 +48,6 @@ if "chain" not in st.session_state:
     chain = prompt_template | llm
     st.session_state.chain = chain
 
-
 # Check and manage the session state for messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -75,14 +77,15 @@ with chat_column:
 
             # Process the input and manage memory using API requests
             response = requests.post(PROCESS_INPUT_URL, json={
-                                     "query": prompt})
+                                     "query": prompt, "user_id": user_id})
             process_response = response.json()
             memory = process_response["content"]
 
             # Search for relevant memories using API request
             response = requests.post(
-                SEARCH_MEMORIES_URL, json={"query": prompt})
+                SEARCH_MEMORIES_URL, json={"query": prompt, "user_id": user_id})
             search_results = response.json()
+            print(search_results)
             relevant_memory = " ".join(
                 [memory["content"] for memory in search_results])
 
@@ -109,10 +112,10 @@ with chat_column:
                 {"role": "assistant", "content": response_text})
 
 with memory_column:
-    st.header("Manage Memory")
+    st.header("Manage Memories")
 
     # Display all memories using API request
-    response = requests.get(GET_MEMORIES_URL)
+    response = requests.get(GET_MEMORIES_URL, params={"user_id": user_id})
     memories = response.json()
     for memory in memories:
         memory_id = memory["metadata"]["id"]
@@ -130,5 +133,6 @@ with memory_column:
     with st.expander("✍️ Create New Memory"):
         new_memory = st.text_area("Enter a new memory")
         if st.button("Store Memory"):
-            requests.post(CREATE_MEMORY_URL, json={"content": new_memory})
+            requests.post(CREATE_MEMORY_URL, json={
+                          "content": new_memory, "user_id": user_id})
             st.experimental_rerun()

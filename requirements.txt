@@ -3,3 +3,4 @@ langchain-openai
 langchain-community
 supabase
 fastapi
+pydantic

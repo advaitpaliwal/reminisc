@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class MemoryQuery(BaseModel):
     query: str
+    user_id: str
 
 
 class MemoryBase(BaseModel):
@@ -10,7 +11,7 @@ class MemoryBase(BaseModel):
 
 
 class MemoryCreate(MemoryBase):
-    pass
+    user_id: str
 
 
 class MemoryResponse(MemoryBase):

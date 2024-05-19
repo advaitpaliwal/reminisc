@@ -12,7 +12,7 @@ router = APIRouter(
 @router.post("/", response_model=MemoryResponse)
 async def create_memory(data: MemoryCreate, service: MemoryService = Depends()):
     try:
-        created_memory = service.create_memory(data.content)
+        created_memory = service.create_memory(data.content, data.user_id)
         return created_memory
     except Exception as e:
         traceback.print_exc()
@@ -20,9 +20,9 @@ async def create_memory(data: MemoryCreate, service: MemoryService = Depends()):
 
 
 @router.get("/", response_model=list[MemoryResponse])
-async def get_memories(service: MemoryService = Depends()):
+async def get_memories(user_id: str, service: MemoryService = Depends()):
     try:
-        memories = service.get_all_memories()
+        memories = service.get_all_memories(user_id)
         return memories
     except Exception as e:
         traceback.print_exc()
@@ -42,7 +42,7 @@ async def delete_memory(memory_id: str, service: MemoryService = Depends()):
 @router.post("/search", response_model=list[MemoryResponse])
 async def search_memories(data: MemoryQuery, service: MemoryService = Depends()):
     try:
-        relevant_memories = service.search_memories(data.query)
+        relevant_memories = service.search_memories(data.query, data.user_id)
         return relevant_memories
     except Exception as e:
         traceback.print_exc()
@@ -52,7 +52,8 @@ async def search_memories(data: MemoryQuery, service: MemoryService = Depends())
 @router.post("/classify")
 async def classify_input(data: MemoryQuery, service: MemoryService = Depends()):
     try:
-        should_store_memory = service.classify_input(data.query)
+        should_store_memory = service.classify_input(
+            data.query, data.user_id)
         return {"should_store_memory": should_store_memory}
     except Exception as e:
         traceback.print_exc()
@@ -62,7 +63,7 @@ async def classify_input(data: MemoryQuery, service: MemoryService = Depends()):
 @router.post("/process", response_model=MemoryResponse)
 async def process_user_input(data: MemoryQuery, service: MemoryService = Depends()):
     try:
-        memory = service.process_user_input(data.query)
+        memory = service.process_user_input(data.query, data.user_id)
         return memory
     except Exception as e:
         traceback.print_exc()
