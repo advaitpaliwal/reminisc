@@ -9,7 +9,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Set up the title
-st.set_page_config(page_title="Reminisc", layout="wide")
+st.set_page_config(
+    page_title="Reminisc - Personal Memory for AI", layout="wide", page_icon="🧠")
 st.title("🧠 Reminisc")
 st.info('Personal memory for AI. https://github.com/advaitpaliwal/reminisc')
 
@@ -77,7 +78,7 @@ with chat_column:
 
             # Process the input and manage memory using API requests
             response = requests.post(PROCESS_INPUT_URL, json={
-                                     "query": prompt, "user_id": user_id})
+                "query": prompt, "user_id": user_id})
             process_response = response.json()
             memory = process_response["content"]
 
