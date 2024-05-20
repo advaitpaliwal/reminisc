@@ -1,5 +1,7 @@
+from openai import OpenAI
 import os
 import logging
+from reminisc.config.config import Config
 from datetime import datetime
 from supabase import create_client
 from dotenv import load_dotenv
@@ -17,11 +19,8 @@ class MemoryManager:
     def __init__(self):
         self.memories_table = "memories"
         self.classifications_table = "classifications"
-        self.embedder = OpenAIEmbeddings()
-        self.classifier = MemoryClassifier()
-        self.creator = MemoryCreator()
         self.client = self._initialize_supabase_client()
-        self.vectordb = self._initialize_vector_db()
+        self.vectordb = None
         logger.info("MemoryManager initialized")
 
     def _initialize_supabase_client(self):
@@ -29,7 +28,9 @@ class MemoryManager:
         key = os.getenv("SUPABASE_KEY")
         return create_client(url, key)
 
-    def _initialize_vector_db(self):
+    def _initialize_vector_db(self, openai_api_key):
+        # Initialize embedder with API key
+        self.embedder = OpenAIEmbeddings(api_key=openai_api_key)
         return SupabaseVectorStore(
             embedding=self.embedder,
             client=self.client,
@@ -37,7 +38,9 @@ class MemoryManager:
             query_name="match_memories",
         )
 
-    def add_memory(self, memory: str, user_id: str):
+    def add_memory(self, memory: str, user_id: str, openai_api_key: str):
+        if not self.vectordb:
+            self.vectordb = self._initialize_vector_db(openai_api_key)
         memory_id = str(uuid4())
         metadata = {
             "id": memory_id,
@@ -49,7 +52,9 @@ class MemoryManager:
         logger.info(f"Memory added: {memory} for user {user_id}")
         return metadata | {"content": memory}
 
-    def search_memory(self, query: str, user_id: str):
+    def search_memory(self, query: str, user_id: str, openai_api_key: str):
+        if not self.vectordb:
+            self.vectordb = self._initialize_vector_db(openai_api_key)
         results = self.vectordb.similarity_search(
             query, filter={"user_id": user_id})
         logger.info(f"Search results: {results} for user {user_id}")
@@ -61,16 +66,22 @@ class MemoryManager:
         logger.info(f"Loaded memories: {result} for user {user_id}")
         return result.data
 
-    def create_memory(self, user_input: str, user_id: str):
+    def create_memory(self, user_input: str, user_id: str, openai_api_key: str):
+        self.creator = MemoryCreator(
+            openai_api_key=openai_api_key)
         memory = self.creator.create_memory(user_input)
-        memory_data = self.add_memory(memory, user_id)
+        memory_data = self.add_memory(memory, user_id, openai_api_key)
         return memory_data
 
-    def remove_memory(self, memory_id: str):
+    def remove_memory(self, memory_id: str, openai_api_key: str):
+        if not self.vectordb:
+            self.vectordb = self._initialize_vector_db(openai_api_key)
         self.vectordb.delete(ids=[memory_id])
         logger.info(f"Memory removed: {memory_id}")
 
-    def classify(self, user_input: str, user_id: str):
+    def classify(self, user_input: str, user_id: str, openai_api_key: str):
+        self.classifier = MemoryClassifier(
+            openai_api_key=openai_api_key)
         classification = self.classifier.classify(user_input)
         self.save_classification(user_input, classification, user_id)
         return classification
@@ -88,13 +99,15 @@ class MemoryManager:
         self.client.table(self.classifications_table).insert(data).execute()
         logger.info(f"Classification saved: {data}")
 
-    def handle_user_input(self, user_input: str, user_id: str) -> dict | None:
+    def handle_user_input(self, user_input: str, user_id: str, openai_api_key: str) -> dict | None:
         logger.info(f"User Input: {user_input}")
-        should_store_memory = self.classify(user_input, user_id)
+        should_store_memory = self.classify(
+            user_input, user_id, openai_api_key)
         logger.info(f"Should store memory: {should_store_memory}")
         if should_store_memory:
             logger.info("Storing memory")
-            memory_data = self.create_memory(user_input, user_id)
+            memory_data = self.create_memory(
+                user_input, user_id, openai_api_key)
             logger.info(f"Memory created: {memory_data}")
             return memory_data
         else:

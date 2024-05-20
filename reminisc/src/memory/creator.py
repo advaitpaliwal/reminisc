@@ -3,14 +3,12 @@ import os
 import logging
 from reminisc.config.config import Config
 from datetime import datetime
-from dotenv import load_dotenv
 
-load_dotenv()
 logger = logging.getLogger(__name__)
 
 
 class MemoryCreator:
-    def __init__(self):
+    def __init__(self, openai_api_key: str):
         self.model_name = Config.MEMORY_CREATOR_MODEL_NAME
         self.system_prompt = (
             "You are an AI assistant tasked with generating concise memories based on user input. "
@@ -19,7 +17,7 @@ class MemoryCreator:
             "Your goal is to create a memory that can be effectively used to enhance the user's experience in subsequent conversations."
         )
         self.llm = ChatOpenAI(model=self.model_name,
-                              api_key=os.getenv("OPENAI_API_KEY"))
+                              api_key=openai_api_key)
 
     def create_memory(self, user_input: str) -> str:
         messages = [

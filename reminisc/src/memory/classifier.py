@@ -2,14 +2,12 @@ from openai import OpenAI
 import os
 import logging
 from reminisc.config.config import Config
-from dotenv import load_dotenv
 
-load_dotenv()
 logger = logging.getLogger(__name__)
 
 
 class MemoryClassifier:
-    def __init__(self):
+    def __init__(self, openai_api_key: str):
         self.model_name = Config.CLASSIFIER_MODEL_NAME
 
         self.system_prompt = (
@@ -22,7 +20,7 @@ class MemoryClassifier:
             "If the input contains any such noteworthy information, respond with 'yes' to save it as a memory.\n"
             "If the input does not contain any important details worth saving, respond with 'no' to disregard it.\n"
         )
-        self.openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.openai = OpenAI(api_key=openai_api_key)
 
     def classify(self, query) -> bool:
         try:

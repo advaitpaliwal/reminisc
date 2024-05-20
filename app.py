@@ -4,7 +4,14 @@ import requests
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate
+from dotenv import load_dotenv
+import os
 
+# Load environment variables from .env file
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+headers = {"Content-Type": "application/json",
+           "openai_api_key": OPENAI_API_KEY}
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -79,13 +86,13 @@ with chat_column:
 
             # Process the input and manage memory using API requests
             response = requests.post(PROCESS_INPUT_URL, json={
-                "query": prompt, "user_id": user_id})
+                "query": prompt, "user_id": user_id}, headers=headers)
             process_response = response.json()
             memory = process_response["content"]
 
             # Search for relevant memories using API request
             response = requests.post(
-                SEARCH_MEMORIES_URL, json={"query": prompt, "user_id": user_id})
+                SEARCH_MEMORIES_URL, json={"query": prompt, "user_id": user_id}, headers=headers)
             search_results = response.json()
             print(search_results)
             relevant_memory = " ".join(
@@ -117,7 +124,8 @@ with memory_column:
     st.header("Manage Memories")
 
     # Display all memories using API request
-    response = requests.get(GET_MEMORIES_URL, params={"user_id": user_id})
+    response = requests.get(GET_MEMORIES_URL, params={
+                            "user_id": user_id}, headers=headers)
     memories = response.json()
     for memory in memories:
         memory_id = memory["metadata"]["id"]
@@ -129,12 +137,13 @@ with memory_column:
             st.write(f"**Timestamp:** {timestamp}")
             st.write(f"**Memory:** {memory_content}")
             if st.button("Delete", key=memory_id):
-                requests.delete(f"{DELETE_MEMORY_URL}{memory_id}")
+                requests.delete(
+                    f"{DELETE_MEMORY_URL}{memory_id}", headers=headers)
                 st.experimental_rerun()
 
     with st.expander("✍️ Create New Memory"):
         new_memory = st.text_area("Enter a new memory")
         if st.button("Store Memory"):
             requests.post(CREATE_MEMORY_URL, json={
-                          "content": new_memory, "user_id": user_id})
+                          "content": new_memory, "user_id": user_id}, headers=headers)
             st.experimental_rerun()
