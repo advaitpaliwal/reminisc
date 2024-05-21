@@ -4,7 +4,7 @@ import requests
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate
-
+from uuid import uuid4
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ st.title("🧠 Reminisc")
 st.info('Personal memory for AI. https://github.com/advaitpaliwal/reminisc')
 
 user_id = st.text_input("Enter a User ID",
-                        value=st.session_state.get("user_id", "default"))
+                        value=st.session_state.get("user_id", str(uuid4().hex[:8])))
 st.session_state["user_id"] = user_id
 
 openai_api_key = st.text_input("Enter your OpenAI API Key", type="password")
@@ -25,7 +25,7 @@ headers = {"Content-Type": "application/json",
            "openai-api-key": st.session_state.openai_api_key}
 
 # API endpoint URLs
-BASE_URL = "http://localhost:8000/v0/memory"
+BASE_URL = "https://api.reminisc.tech/v0/memory"
 CREATE_MEMORY_URL = f"{BASE_URL}/"
 GET_MEMORIES_URL = f"{BASE_URL}/"
 DELETE_MEMORY_URL = f"{BASE_URL}/"
