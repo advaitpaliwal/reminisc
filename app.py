@@ -84,12 +84,6 @@ with chat_column:
                 with st.chat_message("user"):
                     st.markdown(prompt)
 
-            # Process the input and manage memory using API requests
-            response = requests.post(PROCESS_INPUT_URL, json={
-                "query": prompt, "user_id": user_id}, headers=headers)
-            process_response = response.json()
-            memory = process_response["content"]
-
             # Search for relevant memories using API request
             response = requests.post(
                 SEARCH_MEMORIES_URL, json={"query": prompt, "user_id": user_id}, headers=headers)
@@ -97,6 +91,12 @@ with chat_column:
             print(search_results)
             relevant_memory = " ".join(
                 [memory["content"] for memory in search_results])
+
+            # Process the input and manage memory using API requests
+            response = requests.post(PROCESS_INPUT_URL, json={
+                "query": prompt, "user_id": user_id}, headers=headers)
+            process_response = response.json()
+            memory = process_response["content"]
 
             # Generate response using the LLM and conversation memory
             llm_input = {
