@@ -12,7 +12,7 @@ router = APIRouter(
 
 @router.post("/", response_model=MemoryResponse)
 async def create_memory(data: MemoryCreate, service: MemoryService = Depends(), openai_api_key: Annotated[Union[str,
-                                                                                                                None], Header(convert_underscores=False)] = None):
+                                                                                                                None], Header()] = None):
     if not openai_api_key:
         raise HTTPException(
             status_code=400, detail="OpenAI API key is missing")
@@ -47,7 +47,7 @@ async def delete_memory(memory_id: str, service: MemoryService = Depends()):
 
 @router.post("/search", response_model=list[MemoryResponse])
 async def search_memories(data: MemoryQuery, service: MemoryService = Depends(), openai_api_key: Annotated[Union[str,
-                                                                                                                 None], Header(convert_underscores=False)] = None):
+                                                                                                                 None], Header()] = None):
     if not openai_api_key:
         raise HTTPException(
             status_code=400, detail="OpenAI API key is missing")
@@ -62,7 +62,7 @@ async def search_memories(data: MemoryQuery, service: MemoryService = Depends(),
 
 @router.post("/classify")
 async def classify_input(data: MemoryQuery, service: MemoryService = Depends(), openai_api_key: Annotated[Union[str,
-                                                                                                                None], Header(convert_underscores=False)] = None):
+                                                                                                                None], Header()] = None):
     if not openai_api_key:
         raise HTTPException(
             status_code=400, detail="OpenAI API key is missing")
@@ -77,7 +77,7 @@ async def classify_input(data: MemoryQuery, service: MemoryService = Depends(), 
 
 @router.post("/process", response_model=MemoryResponse)
 async def process_user_input(data: MemoryQuery, service: MemoryService = Depends(), openai_api_key: Annotated[Union[str,
-                                                                                                                    None], Header(convert_underscores=False)] = None):
+                                                                                                                    None], Header()] = None):
     if not openai_api_key:
         raise HTTPException(
             status_code=400, detail="OpenAI API key is missing")

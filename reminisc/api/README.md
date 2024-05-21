@@ -20,7 +20,7 @@ http://localhost:8000/memory
   - `content` (string): The content of the memory to be created.
   - `user_id` (string): The ID of the user associated with the memory.
 - **Headers**:
-  - `openai_api_key` (string): The OpenAI API key for processing the memory.
+  - `openai-api-key` (string): The OpenAI API key for processing the memory.
 - **Response** (`MemoryResponse`):
   - `content` (string): The content of the created memory.
   - `metadata` (dict): Additional metadata associated with the memory, including:
@@ -62,7 +62,7 @@ http://localhost:8000/memory
   - `query` (string): The search query to find relevant memories.
   - `user_id` (string): The ID of the user to search memories for.
 - **Headers**:
-  - `openai_api_key` (string): The OpenAI API key for processing the search query.
+  - `openai-api-key` (string): The OpenAI API key for processing the search query.
 - **Response** (list of `MemoryResponse`):
   - An array of memory objects that match the search query, each containing:
     - `content` (string): The content of the memory.
@@ -80,7 +80,7 @@ http://localhost:8000/memory
   - `query` (string): The user input to be classified.
   - `user_id` (string): The ID of the user associated with the input.
 - **Headers**:
-  - `openai_api_key` (string): The OpenAI API key for classifying the input.
+  - `openai-api-key` (string): The OpenAI API key for classifying the input.
 - **Response**:
   - `should_store_memory` (boolean): Indicates whether the input should be stored as a memory.
 - **Description**: Classifies the user input to determine if it should be stored as a memory for the specified user.
@@ -93,7 +93,7 @@ http://localhost:8000/memory
   - `query` (string): The user input to be processed.
   - `user_id` (string): The ID of the user associated with the input.
 - **Headers**:
-  - `openai_api_key` (string): The OpenAI API key for processing the user input.
+  - `openai-api-key` (string): The OpenAI API key for processing the user input.
 - **Response** (`MemoryResponse`):
   - `content` (string): The content of the processed memory.
   - `metadata` (dict): Additional metadata associated with the memory, including:
@@ -102,4 +102,4 @@ http://localhost:8000/memory
     - `timestamp` (string): The timestamp when the memory was created, formatted as "YYYY-MM-DD HH:MM:SS".
 - **Description**: Processes the user input, creates a memory if necessary, and returns the processed memory for the specified user.
 
-Note: Most API routes require authentication using an OpenAI API key provided in the `openai_api_key` header. If the API key is missing or invalid, a `400 Bad Request` error will be returned.
+Note: Most API routes require authentication using an OpenAI API key provided in the `openai-api-key` header. If the API key is missing or invalid, a `400 Bad Request` error will be returned.
