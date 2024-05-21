@@ -76,7 +76,14 @@ with chat_column:
 
     # User input handling
     with input_container.container():
-        prompt = st.chat_input("What is up?")
+        if not st.session_state.openai_api_key:
+            chat_disabled = True
+            chat_placeholder = "Enter your OpenAI API Key to chat"
+        else:
+            chat_disabled = False
+            chat_placeholder = "What is up?"
+
+        prompt = st.chat_input(chat_placeholder, disabled=chat_disabled)
         if prompt:
             if not st.session_state.openai_api_key:
                 st.error(
@@ -99,7 +106,6 @@ with chat_column:
             response = requests.post(
                 SEARCH_MEMORIES_URL, json={"query": prompt, "user_id": user_id}, headers=headers)
             search_results = response.json()
-            print(search_results)
             relevant_memory = " ".join(
                 [memory["content"] for memory in search_results])
 
@@ -128,27 +134,38 @@ with chat_column:
 with memory_column:
     st.header("Manage Memories")
 
-    # Display all memories using API request
-    response = requests.get(GET_MEMORIES_URL, params={
-                            "user_id": user_id}, headers=headers)
-    memories = response.json()
-    for memory in memories:
-        memory_id = memory["metadata"]["id"]
-        timestamp = memory["metadata"]["timestamp"]
-        memory_content = memory["content"]
+    if st.session_state.user_id:
+        # Display all memories using API request
+        response = requests.get(GET_MEMORIES_URL, params={
+                                "user_id": user_id}, headers=headers)
+        memories = response.json()
+        for memory in memories:
+            memory_id = memory["metadata"]["id"]
+            timestamp = memory["metadata"]["timestamp"]
+            memory_content = memory["content"]
 
-        with st.expander(memory_content):
-            st.write(f"**Memory ID:** {memory_id}")
-            st.write(f"**Timestamp:** {timestamp}")
-            st.write(f"**Memory:** {memory_content}")
-            if st.button("Delete", key=memory_id):
-                requests.delete(
-                    f"{DELETE_MEMORY_URL}{memory_id}", headers=headers)
-                st.experimental_rerun()
+            with st.expander(memory_content):
+                st.write(f"**Memory ID:** {memory_id}")
+                st.write(f"**Timestamp:** {timestamp}")
+                st.write(f"**Memory:** {memory_content}")
+                if st.button("Delete", key=memory_id):
+                    requests.delete(
+                        f"{DELETE_MEMORY_URL}{memory_id}", headers=headers)
+                    st.rerun()
 
-    with st.expander("✍️ Create New Memory"):
-        new_memory = st.text_area("Enter a new memory")
-        if st.button("Store Memory"):
-            requests.post(CREATE_MEMORY_URL, json={
-                          "content": new_memory, "user_id": user_id}, headers=headers)
-            st.experimental_rerun()
+        with st.expander("✍️ Create New Memory"):
+            if not st.session_state.openai_api_key:
+                memory_placeholder = "Enter your OpenAI API Key to store memories"
+                memory_disabled = True
+            else:
+                memory_placeholder = "Enter a new memory"
+                memory_disabled = False
+
+            new_memory = st.text_area(
+                memory_placeholder, disabled=memory_disabled)
+            if st.button("Store Memory", disabled=memory_disabled):
+                requests.post(CREATE_MEMORY_URL, json={
+                    "content": new_memory, "user_id": user_id}, headers=headers)
+                st.rerun()
+    else:
+        st.warning("Enter a User ID to manage memories")
