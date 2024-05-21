@@ -25,6 +25,11 @@ user_id = st.text_input("Enter a User ID",
                         value=st.session_state.get("user_id", "default"))
 st.session_state["user_id"] = user_id
 
+openai_api_key = st.text_input("Enter your OpenAI API Key", type="password")
+st.session_state["openai_api_key"] = openai_api_key
+headers = {"Content-Type": "application/json",
+           "openai-api-key": st.session_state.openai_api_key}
+
 # API endpoint URLs
 BASE_URL = "http://localhost:8000/v0/memory"
 CREATE_MEMORY_URL = f"{BASE_URL}/"
