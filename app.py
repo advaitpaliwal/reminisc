@@ -4,7 +4,6 @@ import requests
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate
-from uuid import uuid4
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,10 +15,11 @@ st.title("🧠 Reminisc")
 st.info('Personal memory for AI. https://github.com/advaitpaliwal/reminisc')
 
 user_id = st.text_input("Enter a User ID",
-                        value=st.session_state.get("user_id", str(uuid4().hex[:8])))
+                        value=st.session_state.get("user_id"))
 st.session_state["user_id"] = user_id
 
-openai_api_key = st.text_input("Enter your OpenAI API Key", type="password")
+openai_api_key = st.text_input("Enter your OpenAI API Key", type="password", value=st.session_state.get(
+    "openai_api_key"))
 st.session_state["openai_api_key"] = openai_api_key
 headers = {"Content-Type": "application/json",
            "openai-api-key": st.session_state.openai_api_key}
@@ -76,9 +76,9 @@ with chat_column:
 
     # User input handling
     with input_container.container():
-        if not st.session_state.openai_api_key:
+        if not st.session_state.openai_api_key or not st.session_state.user_id:
             chat_disabled = True
-            chat_placeholder = "Enter your OpenAI API Key to chat"
+            chat_placeholder = "Enter your OpenAI API Key and a User ID to chat"
         else:
             chat_disabled = False
             chat_placeholder = "What is up?"
@@ -134,7 +134,7 @@ with chat_column:
 with memory_column:
     st.header("Manage Memories")
 
-    if st.session_state.user_id:
+    if st.session_state.user_id and st.session_state.openai_api_key:
         # Display all memories using API request
         response = requests.get(GET_MEMORIES_URL, params={
                                 "user_id": user_id}, headers=headers)
@@ -168,4 +168,4 @@ with memory_column:
                     "content": new_memory, "user_id": user_id}, headers=headers)
                 st.rerun()
     else:
-        st.warning("Enter a User ID to manage memories")
+        st.warning("Enter your OpenAI API Key and a User ID to manage memories")
